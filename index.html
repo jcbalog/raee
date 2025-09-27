@@ -372,7 +372,7 @@
             <div class="tab-content active" id="love-letter">
                 <h2>My Dearest</h2>
                 <br>
-                <div class="letter" id="loveLetter">
+                <div class="letter" id="loveLetter1">
                     <div class="letter-header">
                         <h3>A Letter For You (09-27-2025)</h3>
                         <span>👇 Click to open</span>
@@ -615,9 +615,13 @@
                 });
             });
             
-            // Expandable love letter
-            const loveLetter = document.getElementById('loveLetter');
-            loveLetter.addEventListener('click', function() {
+         // Expandable love letter
+            const loveLetter1 = document.getElementById('loveLetter1');
+            loveLetter1.addEventListener('click', function() {
+                this.classList.toggle('expanded');
+            });
+            const loveLetter2 = document.getElementById('loveLetter2');
+            loveLetter2.addEventListener('click', function() {
                 this.classList.toggle('expanded');
             });
             
@@ -649,6 +653,7 @@
     </script>
 </body>
 </html>
+
 
 
 
