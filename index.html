@@ -21,6 +21,7 @@
             align-items: center;
             overflow-x: hidden;
             color: #8a1c4a;
+            /* Do not change this background! */
         }
         
         /* Password Modal */
@@ -120,6 +121,11 @@
             max-width: 900px;
             padding: 20px;
             margin-top: 50px;
+            position: relative;   /* <-- Add this */
+            z-index: 100;         /* <-- Add this */
+            background: white;    /* Optional: ensures content is always readable */
+            border-radius: 20px;  /* Optional: for a nice look */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Optional: subtle shadow */
         }
         
         .tabs {
@@ -236,6 +242,14 @@
             font-size: 14px;
         }
         
+        .song-info audio {
+            display: none;
+        }
+        
+        .custom-play-btn {
+            outline: none;
+        }
+        
         /* Notes Tab */
         .note {
             background: #fce4ec;
@@ -313,6 +327,20 @@
             100% { transform: translateY(0px); }
         }
         
+        @keyframes heart-fall {
+            0% {
+                transform: translateY(-40px) scale(1.2) rotate(-10deg);
+                opacity: 0.7;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(420px) scale(1) rotate(10deg);
+                opacity: 0;
+            }
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .welcome-message {
@@ -333,6 +361,187 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+        
+        .artist-header {
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+            background: #f8e8ee;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            color: #d81b60;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .artist-header:hover {
+            background: #ffe4ef;
+        }
+        
+        .artist-songs {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .artist.expanded .artist-songs {
+            max-height: 1000px; /* enough for several songs */
+            margin-bottom: 15px;
+        }
+        
+        #phClock {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #d81b60;
+            background: rgba(255,255,255,0.7);
+            padding: 8px 18px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(216,27,96,0.08);
+            z-index: 10;
+            letter-spacing: 1px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        #heartDropContainer {
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+        }
+
+        .heart-drop {
+            position: absolute;
+            font-size: 28px;
+            animation: heart-fall 2.5s linear forwards;
+            opacity: 0.85;
+            filter: drop-shadow(0 2px 8px #ffb7c5);
+        }
+
+        #musicBgOverlay {
+            pointer-events: none;
+            position: absolute;
+            z-index: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s;
+            background: #2a002a; /* dark pink base */
+            overflow: hidden;
+        }
+
+        #musicBgOverlay .rotating-spot {
+            position: absolute;
+            width: 120vw;
+            height: 120vw;
+            left: -40vw;
+            top: -40vw;
+            background: radial-gradient(circle at 90% 10%, #ffd1dc 0%, #ffb7c5 40%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: rotateSpot 12s linear infinite;
+            transform-origin: 90% 10%;
+            pointer-events: none;
+        }
+
+        #musicBgOverlay.active {
+            opacity: 1;
+        }
+
+        @keyframes rotateSpot {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+        }
+
+        @keyframes musicBgMove {
+            0% {
+                background-position: 50% 50%;
+            }
+            25% {
+                background-position: 80% 20%;
+            }
+            50% {
+                background-position: 20% 80%;
+            }
+            75% {
+                background-position: 80% 80%;
+            }
+            100% {
+                background-position: 50% 50%;
+            }
+        }
+
+        #nowPlayingBox audio {
+    vertical-align: middle;
+    margin-left: 18px;
+    outline: none;
+}
+
+#mainBgOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 60% 40%, #b71550 0%, #2a002a 100%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity 1s;
+}
+
+#mainBgOverlay.active {
+    opacity: 0.92;
+}
+
+#mainBgBorder {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 20;
+    opacity: 0;
+    transition: opacity 1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#mainBgBorder.active {
+    opacity: 1;
+}
+
+#mainBgBorder svg {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+}
+
+#mainBgBorder .circle-border {
+    stroke: #ffd1dc;
+    stroke-width: 10;
+    fill: none;
+    stroke-dasharray: 2820; /* Circumference for 900px radius */
+    stroke-dashoffset: 0;
+    animation: border-rotate 4s linear infinite;
+    transform-origin: 50% 50%;
+    filter: drop-shadow(0 0 18px #ffd1dc);
+    animation-play-state: paused;
+}
+
+@keyframes border-rotate {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+}
     </style>
 </head>
 <body>
@@ -347,11 +556,15 @@
     
     <!-- Welcome Screen -->
     <div class="welcome-screen" id="welcomeScreen">
-        <h1 class="welcome-message">Welcome my Rae, enjoy your stay</h1>
+        <h1 class="welcome-message">Welcome my Rae, enjoy your stay!!</h1>
     </div>
     
     <!-- Main Content -->
+     <div id="phClock"></div>
     <div class="container" id="mainContent" style="display: none;">
+        
+        <br>
+        <br>
         <div class="tabs">
             <button class="tab active" data-tab="love-letter">
                 <span>❤️</span> Love Letter
@@ -437,33 +650,83 @@
             
             <!-- Music Tab -->
             <div class="tab-content" id="music">
-                <h2>Rae's Playlist</h2>
+
+                <h2>Music Area</h2>
                 <br>
-                <div class="song">
-                    <div class="song-icon">🎵</div>
-                    <div class="song-info">
-                        <h4>Pag ibig ng Ikaw at Ako</h4>
-                        <p>Earl Agustin</p>
-                        <br>
-                         <audio controls>
-                            <source src="Earl.ogg" type="audio/ogg">
-                           <source src="Earl.mp3" type="audio/mpeg">      
-                          </audio>
-                    </div>
+                <input type="text" id="artistSearch" placeholder="Search artist..." style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ffb7c5; font-size: 16px;">
+                <br>
+                <div id="nowPlayingBox" style="display: flex; align-items: center; justify-content: space-between; background: #fff5f7; border-radius: 12px; padding: 16px 20px; margin-bottom: 18px; border: 2px dashed #ffb7c5;">
+    <div>
+        <span style="font-weight: bold; color: #d81b60;">Now Playing:</span>
+        <span id="nowPlayingTitle" style="margin-left: 8px;">None</span>
+        <audio id="nowPlayingAudio" controls style="vertical-align: middle; margin-left: 18px; outline: none;">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+    <button id="nextRandomBtn" style="background: #d81b60; color: #fff; border: none; border-radius: 8px; padding: 8px 18px; font-size: 15px; cursor: pointer; font-weight: 600; transition: background 0.2s;">Next Random</button>
+</div>
+                <br>
+                <br>
+            <div id="artistList">
+                <div class="artist" id="artist-earl">
+        <div class="artist-header">Earl Agustin </div>
+        <div class="artist-songs">
+            <div class="song">
+                <div class="song-icon">🎵</div>
+                <div class="song-info">
+                    <h4>Pag ibig ng Ikaw at Ako</h4>
+                    <p>Earl Agustin</p>
+                    <audio controls>
+                        <source src="Earl.ogg" type="audio/ogg">
+                        <source src="Earl.mp3" type="audio/mpeg">
+                    </audio>
                 </div>
-                <div class="song">
-                    <div class="song-icon">🎵</div>
-                    <div class="song-info">
-                        <h4>Leonora</h4>
-                        <p>Sugarcane</p>
-                            <br>
-                         <audio controls>
-                            <source src="Leonora.ogg" type="audio/ogg">
-                           <source src="Leonora.mp3" type="audio/mpeg">      
-                          </audio>
-                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="artist" id="artist-sugarcane">
+        <div class="artist-header">Sugarcane</div>
+        <div class="artist-songs">
+            <div class="song">
+                <div class="song-icon">🎵</div>
+                <div class="song-info">
+                    <h4>Leonora</h4>
+                    <p>Sugarcane</p>
+                    <audio controls>
+                        <source src="Leonora.ogg" type="audio/ogg">
+                        <source src="Leonora.mp3" type="audio/mpeg">
+                    </audio>
                 </div>
-                <div class="song">
+            </div>
+            <div class="song">
+                <div class="song-icon">🎵</div>
+                <div class="song-info">
+                    <h4>Paruparo</h4>
+                    <p>Sugarcane</p>
+                    <audio controls>
+                        <source src="Paruparo.ogg" type="audio/ogg">
+                        <source src="Paruparo.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+            <div class="song">
+                <div class="song-icon">🎵</div>
+                <div class="song-info">
+                    <h4>Dalangin</h4>
+                    <p>Sugarcane</p>
+                    <audio controls>
+                        <source src="Dalangin.ogg" type="audio/ogg">
+                        <source src="Dalangin.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="artist" id="artist-janroberts">
+        <div class="artist-header">Jan Roberts</div>
+        <div class="artist-songs">
+             <div class="song">
                     <div class="song-icon">🎵</div>
                     <div class="song-info">
                         <h4>Sagip</h4>
@@ -472,22 +735,15 @@
                          <audio controls>
                             <source src="Sagip.ogg" type="audio/ogg">
                            <source src="Sagip.mp3" type="audio/mpeg">      
-                          </audio>
+                        </audio>
                     </div>
                 </div>
+            </div>
+         </div>
+          <div class="artist" id="artist-mateo">
+        <div class="artist-header">Mateo</div>
+        <div class="artist-songs">
                 <div class="song">
-                    <div class="song-icon">🎵</div>
-                    <div class="song-info">
-                        <h4>Ikaw at Ako</h4>
-                        <p>Johnoy Danao</p>
-                            <br>
-                         <audio controls>
-                            <source src="Ikaw.ogg" type="audio/ogg">
-                           <source src="Ikaw.mp3" type="audio/mpeg">      
-                          </audio>
-                    </div>
-                </div>
-                  <div class="song">
                     <div class="song-icon">🎵</div>
                     <div class="song-info">
                         <h4>Lalim</h4>
@@ -499,19 +755,12 @@
                           </audio>
                     </div>
                 </div>
-                <div class="song">
-                    <div class="song-icon">🎵</div>
-                    <div class="song-info">
-                        <h4>Paruparo</h4>
-                        <p>Sugarcane</p>
-                            <br>
-                         <audio controls>
-                            <source src="Paruparo.ogg" type="audio/ogg">
-                           <source src="Paruparo.mp3" type="audio/mpeg">      
-                          </audio>
-                    </div>
-                </div>
-                 <div class="song">
+            </div>
+        </div>
+          <div class="artist" id="artist-totaphi">
+        <div class="artist-header">Totaphi</div>
+        <div class="artist-songs">
+            <div class="song">
                     <div class="song-icon">🎵</div>
                     <div class="song-info">
                         <h4>Panata</h4>
@@ -523,7 +772,12 @@
                           </audio>
                     </div>
                 </div>
-                 <div class="song">
+            </div>
+        </div>
+          <div class="artist" id="artist-ivos">
+        <div class="artist-header">IV of Spade</div>
+        <div class="artist-songs">
+              <div class="song">
                     <div class="song-icon">🎵</div>
                     <div class="song-info">
                         <h4>Aura</h4>
@@ -535,7 +789,29 @@
                           </audio>
                     </div>
                 </div>
-                    <div class="song">
+            </div>
+        </div>           
+          <div class="artist" id="artist-johnoydanao">
+        <div class="artist-header">Johnoy Danao</div>
+        <div class="artist-songs">
+             <div class="song">
+                    <div class="song-icon">🎵</div>
+                    <div class="song-info">
+                        <h4>Ikaw at Ako</h4>
+                        <p>Johnoy Danao</p>
+                            <br>
+                         <audio controls>
+                            <source src="Ikaw.ogg" type="audio/ogg">
+                           <source src="Ikaw.mp3" type="audio/mpeg">      
+                          </audio>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="artist" id="artist-iluna">
+        <div class="artist-header">Iluna</div>
+        <div class="artist-songs">
+             <div class="song">
                     <div class="song-icon">🎵</div>
                     <div class="song-info">
                         <h4>Panaginip</h4>
@@ -547,7 +823,12 @@
                           </audio>
                     </div>
                 </div>
-                <div class="song">
+            </div>
+        </div>
+         <div class="artist" id="artist-davidlasol">
+        <div class="artist-header">David La Sol</div>
+        <div class="artist-songs">
+              <div class="song">
                     <div class="song-icon">🎵</div>
                     <div class="song-info">
                         <h4>Julyo</h4>
@@ -562,21 +843,38 @@
                 <div class="song">
                     <div class="song-icon">🎵</div>
                     <div class="song-info">
-                        <h4>Dalangin</h4>
-                        <p>Sugarcane</p>
+                        <h4>Gazebo</h4>
+                        <p>David La Sol</p>
                             <br>
                          <audio controls>
-                            <source src="Dalangin.ogg" type="audio/ogg">
-                           <source src="Dalangin.mp3" type="audio/mpeg">      
+                            <source src="Gazebo.ogg" type="audio/ogg">
+                           <source src="Gazebo.mp3" type="audio/mpeg">      
+                          </audio>
+                    </div>
+                </div>
+                 <div class="song">
+                    <div class="song-icon">🎵</div>
+                    <div class="song-info">
+                        <h4>Hanap</h4>
+                        <p>David La Sol & ANDREAH</p>
+                            <br>
+                         <audio controls>
+                            <source src="HanapDLS.ogg" type="audio/ogg">
+                           <source src="HanapDLS.mp3" type="audio/mpeg">      
                           </audio>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
             
             <!-- Notes Tab -->
             <div class="tab-content" id="notes">
                 <h2>Daily reminders</h2>
-                <h4>Update: 09-27-2025</h4>
+                <h4>Update: 09-29-2025</h4>
+                <br>
+                <br>
                 <div class="note">
                     <p>Take care always</p>
                 </div>
@@ -630,110 +928,325 @@
     <div class="heart" style="bottom: 15%; left: 15%;">❤️</div>
     <div class="teddy-bear" style="top: 30%; left: 10%;">🧸</div>
     <div class="teddy-bear" style="bottom: 10%; right: 5%;">🧸</div>
-    
+    <div id="heartDropContainer"></div>
+    <div id="musicBgOverlay"></div>
+    <div id="mainBgOverlay"></div>
+    <div id="mainBgBorder">
+        <svg viewBox="0 0 1000 1000">
+    <circle class="circle-border" cx="500" cy="500" r="450"/>
+</svg>
+    </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Password check
-            const passwordModal = document.getElementById('passwordModal');
-            const welcomeScreen = document.getElementById('welcomeScreen');
-            const mainContent = document.getElementById('mainContent');
-            const passwordInput = document.getElementById('passwordInput');
-            const submitPassword = document.getElementById('submitPassword');
-            
-            submitPassword.addEventListener('click', function() {
-                if (passwordInput.value.toLowerCase() === 'raecutie') {
-                    passwordModal.style.opacity = '0';
+document.addEventListener('DOMContentLoaded', function() {
+    // Password check
+    const passwordModal = document.getElementById('passwordModal');
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const mainContent = document.getElementById('mainContent');
+    const passwordInput = document.getElementById('passwordInput');
+    const submitPassword = document.getElementById('submitPassword');
+    
+    submitPassword.addEventListener('click', function() {
+        if (passwordInput.value.toLowerCase() === 'raecutie') {
+            passwordModal.style.opacity = '0';
+            setTimeout(() => {
+                passwordModal.style.display = 'none';
+                welcomeScreen.style.display = 'flex';
+                setTimeout(() => {
+                    welcomeScreen.style.opacity = '0';
                     setTimeout(() => {
-                        passwordModal.style.display = 'none';
-                        welcomeScreen.style.display = 'flex';
-                        
-                        setTimeout(() => {
-                            welcomeScreen.style.opacity = '0';
-                            setTimeout(() => {
-                                welcomeScreen.style.display = 'none';
-                                mainContent.style.display = 'block';
-                            }, 800);
-                        }, 2500);
-                    }, 500);
-                } else {
-                    passwordInput.value = '';
-                    passwordInput.placeholder = 'Try again, my love...';
-                    passwordInput.style.borderColor = '#ff4d4d';
-                    setTimeout(() => {
-                        passwordInput.style.borderColor = '#ffb7c5';
-                        passwordInput.placeholder = 'Our special word...';
-                    }, 1500);
+                        welcomeScreen.style.display = 'none';
+                        mainContent.style.display = 'block';
+                    }, 800);
+                }, 2500);
+            }, 500);
+        } else {
+            passwordInput.value = '';
+            passwordInput.placeholder = 'Try again, my love...';
+            passwordInput.style.borderColor = '#ff4d4d';
+            setTimeout(() => {
+                passwordInput.style.borderColor = '#ffb7c5';
+                passwordInput.placeholder = 'Our special word...';
+            }, 1500);
+        }
+    });
+    passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            submitPassword.click();
+        }
+    });
+
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === targetTab) {
+                    content.classList.add('active');
                 }
             });
-            
-            // Allow Enter key to submit password
-            passwordInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    submitPassword.click();
-                }
+        });
+    });
+
+    // Expandable love letter
+    ['loveLetter1', 'loveLetter2', 'loveLetter3'].forEach(id => {
+        const letter = document.getElementById(id);
+        if (letter) {
+            letter.addEventListener('click', function() {
+                this.classList.toggle('expanded');
             });
-            
-            // Tab switching
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const targetTab = this.getAttribute('data-tab');
-                    
-                    // Update active tab
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Show corresponding content
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                        if (content.id === targetTab) {
-                            content.classList.add('active');
-                        }
-                    });
+        }
+    });
+
+    // Expandable artist songs in Music tab
+    document.querySelectorAll('.artist').forEach(artist => {
+        const header = artist.querySelector('.artist-header');
+        if (header) {
+            header.addEventListener('click', function() {
+                artist.classList.toggle('expanded');
+            });
+        }
+    });
+
+    // Add floating decorative elements
+    function addFloatingElements() {
+        for (let i = 0; i < 15; i++) {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.top = Math.random() * 100 + '%';
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            document.body.appendChild(heart);
+        }
+        for (let i = 0; i < 5; i++) {
+            const teddy = document.createElement('div');
+            teddy.classList.add('teddy-bear');
+            teddy.innerHTML = '🧸';
+            teddy.style.left = Math.random() * 100 + '%';
+            teddy.style.top = Math.random() * 100 + '%';
+            teddy.style.animationDelay = Math.random() * 5 + 's';
+            document.body.appendChild(teddy);
+        }
+    }
+    addFloatingElements();
+
+    // PH/Asia Time Clock
+    function updatePHClock() {
+        const clock = document.getElementById('phClock');
+        if (!clock) return;
+        const now = new Date();
+        const options = {
+            timeZone: 'Asia/Manila',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            year: 'numeric',
+            month: 'numeric',
+            day: '2-digit',
+            hour12: true
+        };
+        const timeString = now.toLocaleString('en-US', options);
+        clock.textContent = `PH: ${timeString}`;
+    }
+    updatePHClock();
+    setInterval(updatePHClock, 1000);
+
+    // Heart drop animation in main box
+    function dropHearts() {
+        const container = document.getElementById('heartDropContainer');
+        if (!container) return;
+        const box = document.querySelector('.container');
+        if (!box) return;
+        const boxWidth = box.offsetWidth;
+        const heartCount = Math.floor(Math.random() * 2) + 2;
+        for (let i = 0; i < heartCount; i++) {
+            setTimeout(() => {
+                const heart = document.createElement('span');
+                heart.className = 'heart-drop';
+                heart.textContent = '❤️';
+                heart.style.left = (Math.random() * (boxWidth - 30) + 10) + 'px';
+                heart.style.top = '0px';
+                container.appendChild(heart);
+                heart.addEventListener('animationend', () => {
+                    heart.remove();
                 });
+            }, i * 400);
+        }
+    }
+    setInterval(dropHearts, 2000);
+
+    // --- MUSIC TAB FUNCTIONALITY ---
+
+    // 1. Auto-sort artists alphabetically
+    const artistList = document.getElementById('artistList');
+    if (artistList) {
+        const artists = Array.from(artistList.querySelectorAll('.artist'));
+        artists.sort((a, b) => {
+            const nameA = a.querySelector('.artist-header').textContent.trim().toLowerCase();
+            const nameB = b.querySelector('.artist-header').textContent.trim().toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+        artists.forEach(artist => artistList.appendChild(artist));
+    }
+
+    // 2. Artist search
+    const artistSearch = document.getElementById('artistSearch');
+    if (artistSearch) {
+        artistSearch.addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+            const artists = artistList.querySelectorAll('.artist');
+            artists.forEach(artist => {
+                const name = artist.querySelector('.artist-header').textContent.trim().toLowerCase();
+                artist.style.display = name.includes(query) ? '' : 'none';
             });
-            
-         // Expandable love letter
-            const loveLetter1 = document.getElementById('loveLetter1');
-            loveLetter1.addEventListener('click', function() {
-                this.classList.toggle('expanded');
-            });
-            const loveLetter2 = document.getElementById('loveLetter2');
-            loveLetter2.addEventListener('click', function() {
-                this.classList.toggle('expanded');
-            });
-            const loveLetter3 = document.getElementById('loveLetter3');
-            loveLetter3.addEventListener('click', function() {
-                this.classList.toggle('expanded');
-            });
-            
-            // Add floating decorative elements
-            function addFloatingElements() {
-                for (let i = 0; i < 15; i++) {
-                    const heart = document.createElement('div');
-                    heart.classList.add('heart');
-                    heart.innerHTML = '❤️';
-                    heart.style.left = Math.random() * 100 + '%';
-                    heart.style.top = Math.random() * 100 + '%';
-                    heart.style.animationDelay = Math.random() * 5 + 's';
-                    document.body.appendChild(heart);
-                }
-                
-                for (let i = 0; i < 5; i++) {
-                    const teddy = document.createElement('div');
-                    teddy.classList.add('teddy-bear');
-                    teddy.innerHTML = '🧸';
-                    teddy.style.left = Math.random() * 100 + '%';
-                    teddy.style.top = Math.random() * 100 + '%';
-                    teddy.style.animationDelay = Math.random() * 5 + 's';
-                    document.body.appendChild(teddy);
+        });
+    }
+
+    // 3. Now Playing & Random Song Logic
+    const nowPlayingTitle = document.getElementById('nowPlayingTitle');
+    const nextRandomBtn = document.getElementById('nextRandomBtn');
+    const nowPlayingAudio = document.getElementById('nowPlayingAudio');
+
+    function getAllSongs() {
+        const songs = [];
+        artistList.querySelectorAll('.song-info').forEach(info => {
+            const title = info.querySelector('h4') ? info.querySelector('h4').textContent.trim() : '';
+            const artist = info.querySelector('p') ? info.querySelector('p').textContent.trim() : '';
+            const audio = info.querySelector('audio');
+            let src = '';
+            if (audio) {
+                const mp3 = audio.querySelector('source[type="audio/mpeg"]');
+                const ogg = audio.querySelector('source[type="audio/ogg"]');
+                if (mp3) src = mp3.getAttribute('src');
+                else if (ogg) src = ogg.getAttribute('src');
+            }
+            if (title && artist && src) {
+                songs.push({ title, artist, src, audioElem: audio });
+            }
+        });
+        return songs;
+    }
+
+    let allSongs = getAllSongs();
+    let currentSongIndex = -1;
+    let isUserSeeking = false;
+
+    // Pause all artist audio elements
+    function pauseAllArtistAudio() {
+        allSongs.forEach(song => {
+            if (!song.audioElem.paused) {
+                song.audioElem.pause();
+                song.audioElem.currentTime = 0;
+            }
+        });
+    }
+
+    // Play a song by index
+    function playSong(index) {
+        allSongs = getAllSongs();
+        if (!allSongs.length) return;
+        if (index < 0 || index >= allSongs.length) index = 0;
+        currentSongIndex = index;
+        const song = allSongs[index];
+
+        // Update Now Playing UI
+        nowPlayingTitle.innerHTML = `<span style="color:#d81b60;">${song.title}</span> <span style="color:#888;">by</span> <span style="color:#d81b60;">${song.artist}</span>`;
+
+        // Set audio src and play
+        nowPlayingAudio.src = song.src;
+        nowPlayingAudio.currentTime = 0;
+        nowPlayingAudio.play();
+
+        // Pause all artist audio elements and sync their state
+        pauseAllArtistAudio();
+    }
+
+    // Play a random song, not repeating the current one
+    function playRandomSong() {
+        allSongs = getAllSongs();
+        if (!allSongs.length) return;
+        let randomIndex;
+        do {
+            randomIndex = Math.floor(Math.random() * allSongs.length);
+        } while (allSongs.length > 1 && randomIndex === currentSongIndex);
+        playSong(randomIndex);
+    }
+
+    // Listen for play events on all artist audio elements
+    function attachAudioListeners() {
+        allSongs = getAllSongs();
+        allSongs.forEach((song, idx) => {
+            // Remove default controls and add a custom play button
+            if (song.audioElem) {
+                song.audioElem.controls = false;
+                // Add a custom play button if not already present
+                let playBtn = song.audioElem.parentNode.querySelector('.custom-play-btn');
+                if (!playBtn) {
+                    playBtn = document.createElement('button');
+                    playBtn.className = 'custom-play-btn';
+                    playBtn.textContent = '▶️';
+                    playBtn.style.marginLeft = '10px';
+                    playBtn.style.background = '#fff';
+                    playBtn.style.border = '1px solid #d81b60';
+                    playBtn.style.color = '#d81b60';
+                    playBtn.style.borderRadius = '50%';
+                    playBtn.style.width = '32px';
+                    playBtn.style.height = '32px';
+                    playBtn.style.cursor = 'pointer';
+                    playBtn.style.fontSize = '18px';
+                    playBtn.style.transition = 'background 0.2s';
+                    playBtn.onmouseenter = () => playBtn.style.background = '#ffe4ef';
+                    playBtn.onmouseleave = () => playBtn.style.background = '#fff';
+                    song.audioElem.parentNode.appendChild(playBtn);
+                    playBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        playSong(idx);
+                    });
                 }
             }
-            
-            addFloatingElements();
         });
+    }
+    attachAudioListeners();
+
+    // Now Playing audio events
+    nowPlayingAudio.addEventListener('play', function() {
+        // Pause all artist audio elements
+        pauseAllArtistAudio();
+    });
+    nowPlayingAudio.addEventListener('ended', playRandomSong);
+
+    // Next Random button event
+    if (nextRandomBtn) {
+        nextRandomBtn.addEventListener('click', playRandomSong);
+    }
+
+    // Initial state
+    nowPlayingTitle.textContent = 'None';
+
+    // --- END MUSIC TAB FUNCTIONALITY ---
+
+    const mainBgOverlay = document.getElementById('mainBgOverlay');
+
+    function setMainBgOverlay(active) {
+        if (!mainBgOverlay) return;
+        if (active) {
+            mainBgOverlay.classList.add('active');
+        } else {
+            mainBgOverlay.classList.remove('active');
+        }
+    }
+
+    if (nowPlayingAudio) {
+        nowPlayingAudio.addEventListener('play', () => setMainBgOverlay(true));
+        nowPlayingAudio.addEventListener('pause', () => setMainBgOverlay(false));
+        nowPlayingAudio.addEventListener('ended', () => setMainBgOverlay(false));
+    }
+});
     </script>
 </body>
 </html>
